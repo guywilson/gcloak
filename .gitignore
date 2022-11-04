@@ -2,3 +2,4 @@ builder.ui
 gcloak
 /build
 /dep
+/.vscode
