@@ -14,9 +14,14 @@ static void activate(GtkApplication * app, gpointer user_data)
     GtkWidget *         extractButton;
     GtkWidget *         encryptionFrame;
     GtkWidget *         encryptionBox;
+    GtkWidget *         aesBox;
+    GtkWidget *         xorBox;
     GtkWidget *         aesEncryptionRadio;
     GtkWidget *         xorEncryptionRadio;
     GtkWidget *         noneEncryptionRadio;
+    GtkWidget *         aesPasswordField;
+    GtkWidget *         xorKeystreamField;
+    GtkWidget *         xorBrowseButton;
     GtkWidget *         qualityFrame;
     GtkWidget *         qualityBox;
     GtkWidget *         highQualityRadio;
@@ -30,8 +35,7 @@ static void activate(GtkApplication * app, gpointer user_data)
     mainGrid = gtk_grid_new();
 
     imageFrame = gtk_frame_new(NULL);
-
-    imageBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    imageBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
 
     pixbuf = gdk_pixbuf_new_from_file_at_size("/Users/guy/development/cloak/test/album.bmp", 500, 500, NULL);
     image = gtk_image_new_from_pixbuf(pixbuf);
@@ -97,10 +101,24 @@ static void activate(GtkApplication * app, gpointer user_data)
     gtk_check_button_set_group(GTK_CHECK_BUTTON(xorEncryptionRadio), GTK_CHECK_BUTTON(aesEncryptionRadio));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(noneEncryptionRadio), GTK_CHECK_BUTTON(aesEncryptionRadio));
 
+    aesBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+    aesPasswordField = gtk_password_entry_new();
+
+    gtk_box_append(GTK_BOX(aesBox), aesEncryptionRadio);
+    gtk_box_append(GTK_BOX(aesBox), aesPasswordField);
+
+    xorBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+    xorKeystreamField = gtk_entry_new();
+    xorBrowseButton = gtk_button_new_with_label("Browse...");
+
+    gtk_box_append(GTK_BOX(xorBox), xorEncryptionRadio);
+    gtk_box_append(GTK_BOX(xorBox), xorKeystreamField);
+    gtk_box_append(GTK_BOX(xorBox), xorBrowseButton);
+
     gtk_check_button_set_active(GTK_CHECK_BUTTON(aesEncryptionRadio), TRUE);
 
-    gtk_box_append(GTK_BOX(encryptionBox), aesEncryptionRadio);
-    gtk_box_append(GTK_BOX(encryptionBox), xorEncryptionRadio);
+    gtk_box_append(GTK_BOX(encryptionBox), aesBox);
+    gtk_box_append(GTK_BOX(encryptionBox), xorBox);
     gtk_box_append(GTK_BOX(encryptionBox), noneEncryptionRadio);
 
     gtk_box_set_homogeneous(GTK_BOX(encryptionBox), FALSE);
