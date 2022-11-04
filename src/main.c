@@ -13,9 +13,7 @@ static void activate(GtkApplication * app, gpointer user_data)
     GtkWidget *         mergeButton;
     GtkWidget *         extractButton;
     GtkWidget *         encryptionFrame;
-    GtkWidget *         encryptionBox;
-    GtkWidget *         aesBox;
-    GtkWidget *         xorBox;
+    GtkWidget *         encryptionGrid;
     GtkWidget *         aesEncryptionRadio;
     GtkWidget *         xorEncryptionRadio;
     GtkWidget *         noneEncryptionRadio;
@@ -63,11 +61,16 @@ static void activate(GtkApplication * app, gpointer user_data)
     gtk_widget_set_margin_end(imageFrame, 10);
 
     actionFrame = gtk_frame_new(NULL);
-
     actionBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
 
     mergeButton = gtk_button_new_with_mnemonic("_Merge...");
     extractButton = gtk_button_new_with_mnemonic("_Extract...");
+
+    gtk_button_set_use_underline(GTK_BUTTON(mergeButton), TRUE);
+    gtk_button_set_use_underline(GTK_BUTTON(extractButton), TRUE);
+
+    gtk_widget_set_tooltip_text(mergeButton, "Merge a secret file with the image");
+    gtk_widget_set_tooltip_text(extractButton, "Extract a secret file from the image");
 
     gtk_box_append(GTK_BOX(actionBox), mergeButton);
     gtk_box_append(GTK_BOX(actionBox), extractButton);
@@ -92,7 +95,7 @@ static void activate(GtkApplication * app, gpointer user_data)
     ** Encryption
     */
     encryptionFrame = gtk_frame_new("Encryption");
-    encryptionBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    encryptionGrid = gtk_grid_new();
 
     aesEncryptionRadio = gtk_check_button_new_with_label("AES");
     xorEncryptionRadio = gtk_check_button_new_with_label("XOR");
@@ -101,34 +104,31 @@ static void activate(GtkApplication * app, gpointer user_data)
     gtk_check_button_set_group(GTK_CHECK_BUTTON(xorEncryptionRadio), GTK_CHECK_BUTTON(aesEncryptionRadio));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(noneEncryptionRadio), GTK_CHECK_BUTTON(aesEncryptionRadio));
 
-    aesBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     aesPasswordField = gtk_password_entry_new();
+    gtk_widget_set_size_request(aesPasswordField, 100, 16);
 
-    gtk_box_append(GTK_BOX(aesBox), aesEncryptionRadio);
-    gtk_box_append(GTK_BOX(aesBox), aesPasswordField);
-
-    xorBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     xorKeystreamField = gtk_entry_new();
     xorBrowseButton = gtk_button_new_with_label("Browse...");
 
-    gtk_box_append(GTK_BOX(xorBox), xorEncryptionRadio);
-    gtk_box_append(GTK_BOX(xorBox), xorKeystreamField);
-    gtk_box_append(GTK_BOX(xorBox), xorBrowseButton);
+    gtk_grid_attach(GTK_GRID(encryptionGrid), aesEncryptionRadio, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(encryptionGrid), aesPasswordField, 1, 0, 2, 1);
+    gtk_grid_attach(GTK_GRID(encryptionGrid), xorEncryptionRadio, 0, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(encryptionGrid), xorKeystreamField, 1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(encryptionGrid), xorBrowseButton, 2, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(encryptionGrid), noneEncryptionRadio, 0, 2, 1, 1);
 
+    gtk_grid_set_row_homogeneous(GTK_GRID(encryptionGrid), FALSE);
+    gtk_grid_set_row_spacing(GTK_GRID(encryptionGrid), 8);
+    gtk_grid_set_column_spacing(GTK_GRID(encryptionGrid), 10);
+    
     gtk_check_button_set_active(GTK_CHECK_BUTTON(aesEncryptionRadio), TRUE);
 
-    gtk_box_append(GTK_BOX(encryptionBox), aesBox);
-    gtk_box_append(GTK_BOX(encryptionBox), xorBox);
-    gtk_box_append(GTK_BOX(encryptionBox), noneEncryptionRadio);
+    gtk_widget_set_margin_top(encryptionGrid, 10);
+    gtk_widget_set_margin_bottom(encryptionGrid, 10);
+    gtk_widget_set_margin_start(encryptionGrid, 10);
+    gtk_widget_set_margin_end(encryptionGrid, 10);
 
-    gtk_box_set_homogeneous(GTK_BOX(encryptionBox), FALSE);
-
-    gtk_widget_set_margin_top(encryptionBox, 10);
-    gtk_widget_set_margin_bottom(encryptionBox, 10);
-    gtk_widget_set_margin_start(encryptionBox, 10);
-    gtk_widget_set_margin_end(encryptionBox, 10);
-
-    gtk_frame_set_child(GTK_FRAME(encryptionFrame), encryptionBox);
+    gtk_frame_set_child(GTK_FRAME(encryptionFrame), encryptionGrid);
 
     gtk_widget_set_margin_top(encryptionFrame, 10);
     gtk_widget_set_margin_bottom(encryptionFrame, 10);
@@ -141,7 +141,7 @@ static void activate(GtkApplication * app, gpointer user_data)
     qualityFrame = gtk_frame_new("Quality");
     qualityBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
 
-    highQualityRadio = gtk_check_button_new_with_label("High (1-bit");
+    highQualityRadio = gtk_check_button_new_with_label("High (1-bit)");
     mediumQualityRadio = gtk_check_button_new_with_label("Medium (2-bits)");
     lowQualityRadio = gtk_check_button_new_with_label("Low (4-bits)");
 
@@ -168,8 +168,8 @@ static void activate(GtkApplication * app, gpointer user_data)
     gtk_widget_set_margin_start(qualityFrame, 0);
     gtk_widget_set_margin_end(qualityFrame, 10);
 
-    gtk_grid_attach(GTK_GRID(mainGrid), imageFrame, 0, 0, 1, 3);
-    gtk_grid_attach(GTK_GRID(mainGrid), actionFrame, 0, 3, 1, 1);
+    gtk_grid_attach(GTK_GRID(mainGrid), imageFrame, 0, 0, 1, 2);
+    gtk_grid_attach(GTK_GRID(mainGrid), actionFrame, 0, 2, 2, 1);
     gtk_grid_attach(GTK_GRID(mainGrid), encryptionFrame, 1, 0, 1, 1);
     gtk_grid_attach(GTK_GRID(mainGrid), qualityFrame, 1, 1, 1, 1);
 
