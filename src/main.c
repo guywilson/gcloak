@@ -17,6 +17,11 @@ static void activate(GtkApplication * app, gpointer user_data)
     GtkWidget *         aesEncryptionRadio;
     GtkWidget *         xorEncryptionRadio;
     GtkWidget *         noneEncryptionRadio;
+    GtkWidget *         qualityFrame;
+    GtkWidget *         qualityBox;
+    GtkWidget *         highQualityRadio;
+    GtkWidget *         mediumQualityRadio;
+    GtkWidget *         lowQualityRadio;
     GdkPixbuf *         pixbuf;
 
     mainWindow = gtk_application_window_new(app);
@@ -79,8 +84,10 @@ static void activate(GtkApplication * app, gpointer user_data)
     gtk_widget_set_margin_start(actionFrame, 10);
     gtk_widget_set_margin_end(actionFrame, 10);
 
+    /*
+    ** Encryption
+    */
     encryptionFrame = gtk_frame_new("Encryption");
-
     encryptionBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
 
     aesEncryptionRadio = gtk_check_button_new_with_label("AES");
@@ -110,9 +117,43 @@ static void activate(GtkApplication * app, gpointer user_data)
     gtk_widget_set_margin_start(encryptionFrame, 0);
     gtk_widget_set_margin_end(encryptionFrame, 10);
 
+    /*
+    ** Quality
+    */
+    qualityFrame = gtk_frame_new("Quality");
+    qualityBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+
+    highQualityRadio = gtk_check_button_new_with_label("High (1-bit");
+    mediumQualityRadio = gtk_check_button_new_with_label("Medium (2-bits)");
+    lowQualityRadio = gtk_check_button_new_with_label("Low (4-bits)");
+
+    gtk_check_button_set_group(GTK_CHECK_BUTTON(mediumQualityRadio), GTK_CHECK_BUTTON(highQualityRadio));
+    gtk_check_button_set_group(GTK_CHECK_BUTTON(lowQualityRadio), GTK_CHECK_BUTTON(highQualityRadio));
+
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(highQualityRadio), TRUE);
+
+    gtk_box_append(GTK_BOX(qualityBox), highQualityRadio);
+    gtk_box_append(GTK_BOX(qualityBox), mediumQualityRadio);
+    gtk_box_append(GTK_BOX(qualityBox), lowQualityRadio);
+
+    gtk_box_set_homogeneous(GTK_BOX(qualityBox), FALSE);
+
+    gtk_widget_set_margin_top(qualityBox, 10);
+    gtk_widget_set_margin_bottom(qualityBox, 10);
+    gtk_widget_set_margin_start(qualityBox, 10);
+    gtk_widget_set_margin_end(qualityBox, 10);
+
+    gtk_frame_set_child(GTK_FRAME(qualityFrame), qualityBox);
+
+    gtk_widget_set_margin_top(qualityFrame, 0);
+    gtk_widget_set_margin_bottom(qualityFrame, 10);
+    gtk_widget_set_margin_start(qualityFrame, 0);
+    gtk_widget_set_margin_end(qualityFrame, 10);
+
     gtk_grid_attach(GTK_GRID(mainGrid), imageFrame, 0, 0, 1, 3);
     gtk_grid_attach(GTK_GRID(mainGrid), actionFrame, 0, 3, 1, 1);
     gtk_grid_attach(GTK_GRID(mainGrid), encryptionFrame, 1, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(mainGrid), qualityFrame, 1, 1, 1, 1);
 
     gtk_window_set_child(GTK_WINDOW(mainWindow), mainGrid);
 
