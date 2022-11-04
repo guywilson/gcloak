@@ -110,6 +110,8 @@ static void activate(GtkApplication * app, gpointer user_data)
     xorKeystreamField = gtk_entry_new();
     xorBrowseButton = gtk_button_new_with_label("Browse...");
 
+    gtk_widget_set_tooltip_text(xorBrowseButton, "Browse for a keystream file");
+
     gtk_grid_attach(GTK_GRID(encryptionGrid), aesEncryptionRadio, 0, 0, 1, 1);
     gtk_grid_attach(GTK_GRID(encryptionGrid), aesPasswordField, 1, 0, 2, 1);
     gtk_grid_attach(GTK_GRID(encryptionGrid), xorEncryptionRadio, 0, 1, 1, 1);
